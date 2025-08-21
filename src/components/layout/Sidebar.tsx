@@ -30,6 +30,7 @@ export const Sidebar: React.FC = () => {
         { name: 'Inventory', view: 'inventory', icon: PackageIcon, role: ['ROLE_INVENTORY_MANAGER'] },
         { name: 'Reports', view: 'reports', icon: BarChartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_BUSINESS_OWNER'] },
         { name: 'Purchase Orders', view: 'purchaseOrders', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Products', view: 'products', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
         { name: 'Suppliers', view: 'suppliers', icon: TruckIcon, role: ['SUPPLY_CHAIN_COORDINATOR'] },
         { name: 'Users', view: 'users', icon: UsersIcon, role: ['ROLE_BUSINESS_OWNER'] },
     ];

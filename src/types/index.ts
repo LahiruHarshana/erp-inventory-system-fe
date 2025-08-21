@@ -40,3 +40,14 @@ export interface AuthenticationResponse {
     token: string;
     role:Role
 }
+
+export interface Product {
+    id: number;
+    sku: string;
+    name: string;
+    description: string;
+    categoryId: number;
+    supplierId: number;
+    unitPrice: number;
+}
+export type NewProduct = Omit<Product, 'id'>;

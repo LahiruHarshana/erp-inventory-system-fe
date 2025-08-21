@@ -5,6 +5,7 @@ import storeReducer from '../features/stores/storeSlice';
 import authReducer from '../features/auth/authSlice';
 import categoryReducer from '../features/category/categorySlice';
 import uiReducer from '../features/ui/uiSlice';
+import productReducer from '../features/products/productSlice';
 
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
         inventory: inventoryReducer,
         categories: categoryReducer,
         ui: uiReducer,
+        products: productReducer,
     },
 });
 

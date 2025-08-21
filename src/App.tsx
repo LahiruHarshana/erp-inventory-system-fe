@@ -13,6 +13,7 @@ import { CategoryManagementPage } from './pages/CategoryManagementPage';
 
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
+import {ProductManagementPage} from "./pages/ProductManagementPage.tsx";
 
 const MainContent: React.FC = () => {
     const activeView = useSelector(selectActiveView);
@@ -35,6 +36,8 @@ const MainContent: React.FC = () => {
                 return <StoreManagementPage />;
             case 'categories':
                 return <CategoryManagementPage />;
+            case 'products':
+                return <ProductManagementPage/>
             //     return <InventoryPage />;
             default:
                 return renderDashboard();
