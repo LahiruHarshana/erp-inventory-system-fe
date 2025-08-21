@@ -3,6 +3,8 @@ import userReducer from '../features/user/userSlice';
 import inventoryReducer from '../features/inventory/inventorySlice';
 import storeReducer from '../features/stores/storeSlice';
 import authReducer from '../features/auth/authSlice';
+import categoryReducer from '../features/category/categorySlice';
+import uiReducer from '../features/ui/uiSlice';
 
 
 export const store = configureStore({
@@ -11,6 +13,8 @@ export const store = configureStore({
         stores: storeReducer,
         user: userReducer,
         inventory: inventoryReducer,
+        categories: categoryReducer,
+        ui: uiReducer,
     },
 });
 

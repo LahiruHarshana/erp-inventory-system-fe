@@ -1,3 +1,8 @@
+export interface Category {
+    id: number;
+    name: string;
+}
+export type NewCategory = Omit<Category, 'id'>;
 export interface Store {
     id: number;
     storeName: string;
@@ -33,5 +38,5 @@ export interface AuthenticationRequest {
 
 export interface AuthenticationResponse {
     token: string;
-    // Include other fields your backend sends on login/register
+    role:Role
 }
