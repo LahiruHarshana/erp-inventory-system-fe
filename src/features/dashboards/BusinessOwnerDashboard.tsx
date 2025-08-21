@@ -22,7 +22,6 @@ export const BusinessOwnerDashboard: React.FC = () => {
             <h1 className="text-2xl font-bold mb-4">Business Owner Dashboard</h1>
             <p>You have {stores.length} stores.</p>
             <StoreManagementPage/>
-            {/* The full store management UI would go here */}
         </div>
     );
 };

@@ -22,6 +22,7 @@ export const registerUser = createAsyncThunk(
     'auth/registerUser',
     async (userData: RegisterRequest, { rejectWithValue }) => {
         try {
+            console.log('Registering user with data:', userData);
             const response = await authApiService.register(userData);
             return response.data;
         } catch (error: any) {
@@ -37,7 +38,7 @@ export const loginUser = createAsyncThunk(
             const response = await authApiService.authenticate(userData);
             localStorage.setItem('token', response.data.token);
             const decodedToken = { role: 'BUSINESS_OWNER' };
-            const userPayload = { token: response.data.token, role: decodedToken.role, email: userData.email };
+            const userPayload = { token: response.data.token, role: response.data.role, email: userData.email };
             localStorage.setItem('user', JSON.stringify(userPayload));
             return userPayload;
         } catch (error: any) {
@@ -63,12 +64,8 @@ export const authSlice = createSlice({
                 state.status = 'loading';
                 state.error = null;
             })
-            // --- MODIFICATION 2: Update registerUser.fulfilled Reducer ---
-            // On successful registration, just update the status. DO NOT set user/token.
-            // This ensures the user remains logged out.
             .addCase(registerUser.fulfilled, (state) => {
                 state.status = 'succeeded';
-                // Note: We are NOT changing state.user or state.token here.
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.status = 'failed';
