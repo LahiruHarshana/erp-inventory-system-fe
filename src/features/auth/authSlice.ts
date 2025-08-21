@@ -9,7 +9,6 @@ interface AuthState {
     error: string | null;
 }
 
-// Attempt to load user and token from localStorage on initial load
 const userFromStorage = localStorage.getItem('user');
 const tokenFromStorage = localStorage.getItem('token');
 
@@ -19,18 +18,11 @@ const initialState: AuthState = {
     status: 'idle',
     error: null,
 };
-
-// --- MODIFICATION 1: Update registerUser Thunk ---
-// The thunk should just make the API call and return the response on success.
-// It should not log the user in or set localStorage.
 export const registerUser = createAsyncThunk(
     'auth/registerUser',
     async (userData: RegisterRequest, { rejectWithValue }) => {
         try {
-            // Simply make the API call and let the component know it succeeded.
             const response = await authApiService.register(userData);
-            // On success, we can return the server's response data if needed,
-            // but we won't use it to set the state.
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.message || 'Registration failed');
@@ -44,9 +36,7 @@ export const loginUser = createAsyncThunk(
         try {
             const response = await authApiService.authenticate(userData);
             localStorage.setItem('token', response.data.token);
-            // In a real app, decode the JWT to get user details like role
-            // For now, we'll mock it. You should replace this with a library like jwt-decode
-            const decodedToken = { role: 'BUSINESS_OWNER' }; // Replace with actual decoding logic
+            const decodedToken = { role: 'BUSINESS_OWNER' };
             const userPayload = { token: response.data.token, role: decodedToken.role, email: userData.email };
             localStorage.setItem('user', JSON.stringify(userPayload));
             return userPayload;
