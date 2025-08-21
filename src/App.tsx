@@ -1,35 +1,39 @@
-import { useSelector } from 'react-redux';
-import Header from './components/layout/Header';
-import Sidebar from './components/layout/Sidebar';
-import BusinessOwnerDashboard from './features/dashboards/BusinessOwnerDashboard';
-import InventoryManagerDashboard from './features/dashboards/InventoryManagerDashboard';
-import SupplyChainCoordinatorDashboard from './features/dashboards/SupplyChainCoordinatorDashboard';
-import type {RootState} from "./app/store.ts";
+import React, { useState } from 'react';
+import { Provider, useSelector } from 'react-redux';
+import { store, type RootState } from './app/store';
+import { BusinessOwnerDashboard } from './features/dashboards/BusinessOwnerDashboard';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { InventoryManagerDashboard } from './features/dashboards/InventoryManagerDashboard';
+import { SupplyChainCoordinatorDashboard } from './features/dashboards/SupplyChainCoordinatorDashboard';
+import { Sidebar } from './components/layout/Sidebar';
+import { Header } from './components/layout/Header';
 
-const MainContent = () => {
-    const currentRole = useSelector((state: RootState) => state.user.role);
+const MainContent: React.FC = () => {
+    // The role is now sourced from the user object within the auth slice
+    const currentRole = useSelector((state: RootState) => state.auth.user?.role);
 
     const renderDashboard = () => {
         switch (currentRole) {
-            case 'Inventory Manager':
+            case 'INVENTORY_MANAGER':
                 return <InventoryManagerDashboard />;
-            case 'Business Owner':
+            case 'BUSINESS_OWNER':
                 return <BusinessOwnerDashboard />;
-            case 'Supply Chain Coordinator':
+            case 'SUPPLY_CHAIN_COORDINATOR':
                 return <SupplyChainCoordinatorDashboard />;
             default:
-                return <div className="p-8">Please select a valid role.</div>;
+                return <div className="p-8">Welcome! Please select a valid role to see your dashboard.</div>;
         }
     };
 
     return (
-        <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
+        <main className="flex-1 overflow-y-auto bg-gray-100">
             {renderDashboard()}
         </main>
     );
 };
 
-const App = () => {
+const AppLayout: React.FC = () => {
     return (
         <div className="flex h-screen font-sans bg-gray-100">
             <Sidebar />
@@ -38,6 +42,31 @@ const App = () => {
                 <MainContent />
             </div>
         </div>
+    );
+};
+
+
+const AuthHandler: React.FC = () => {
+    const { token } = useSelector((state: RootState) => state.auth);
+    const [isLogin, setIsLogin] = useState(true);
+
+    if (token) {
+        return <AppLayout />;
+    }
+
+    return isLogin ? (
+        <LoginPage onSwitch={() => setIsLogin(false)} />
+    ) : (
+        <RegisterPage onSwitch={() => setIsLogin(true)} />
+    );
+};
+
+
+const App: React.FC = () => {
+    return (
+        <Provider store={store}>
+            <AuthHandler />
+        </Provider>
     );
 };
 
