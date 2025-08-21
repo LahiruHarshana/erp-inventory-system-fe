@@ -14,12 +14,13 @@ const MainContent: React.FC = () => {
     const currentRole = useSelector((state: RootState) => state.auth.user?.role);
 
     const renderDashboard = () => {
+        console.log(`Current role: ${currentRole}`); // Debugging line to check the current role
         switch (currentRole) {
-            case 'INVENTORY_MANAGER':
+            case 'ROLE_INVENTORY_MANAGER':
                 return <InventoryManagerDashboard />;
             case 'BUSINESS_OWNER':
                 return <BusinessOwnerDashboard />;
-            case 'SUPPLY_CHAIN_COORDINATOR':
+            case 'ROLE_SUPPLY_CHAIN_COORDINATOR':
                 return <SupplyChainCoordinatorDashboard />;
             default:
                 return <div className="p-8">Welcome! Please select a valid role to see your dashboard.</div>;

@@ -12,6 +12,9 @@ export const RegisterPage: React.FC<{ onSwitch: () => void }> = ({ onSwitch }) =
         password: '',
         role: 'ROLE_BUSINESS_OWNER',
     });
+    // State to display a success message to the user
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
     const dispatch = useDispatch<AppDispatch>();
     const { status, error } = useSelector((state: RootState) => state.auth);
 
@@ -19,26 +22,39 @@ export const RegisterPage: React.FC<{ onSwitch: () => void }> = ({ onSwitch }) =
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(registerUser(formData));
+        setSuccessMessage(null);
+
+        const resultAction = await dispatch(registerUser(formData));
+
+        if (registerUser.fulfilled.match(resultAction)) {
+            setSuccessMessage('Account created successfully! Please sign in.');
+            setTimeout(() => {
+                onSwitch();
+            }, 2000);
+        }
     };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
             <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
                 <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Create Account</h2>
-                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+                {/* Show server error OR success message */}
+                {error && !successMessage && <p className="text-red-500 text-center mb-4">{error}</p>}
+                {successMessage && <p className="text-green-600 bg-green-50 p-3 rounded-md text-center mb-4">{successMessage}</p>}
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">First Name</label>
                         <input type="text" name="firstname" onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                     </div>
-                     <div>
+                    <div>
                         <label className="block text-sm font-medium text-gray-700">Last Name</label>
                         <input type="text" name="lastname" onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                     </div>
-                     <div>
+                    <div>
                         <label className="block text-sm font-medium text-gray-700">Email</label>
                         <input type="email" name="email" onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                     </div>

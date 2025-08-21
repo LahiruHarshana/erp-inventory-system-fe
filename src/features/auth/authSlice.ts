@@ -20,16 +20,18 @@ const initialState: AuthState = {
     error: null,
 };
 
+// --- MODIFICATION 1: Update registerUser Thunk ---
+// The thunk should just make the API call and return the response on success.
+// It should not log the user in or set localStorage.
 export const registerUser = createAsyncThunk(
     'auth/registerUser',
     async (userData: RegisterRequest, { rejectWithValue }) => {
         try {
+            // Simply make the API call and let the component know it succeeded.
             const response = await authApiService.register(userData);
-            localStorage.setItem('token', response.data.token);
-            // You might need to decode the token to get user info or make another API call
-            const userPayload = { token: response.data.token, role: userData.role, email: userData.email };
-            localStorage.setItem('user', JSON.stringify(userPayload));
-            return userPayload;
+            // On success, we can return the server's response data if needed,
+            // but we won't use it to set the state.
+            return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.message || 'Registration failed');
         }
@@ -71,10 +73,12 @@ export const authSlice = createSlice({
                 state.status = 'loading';
                 state.error = null;
             })
-            .addCase(registerUser.fulfilled, (state, action: PayloadAction<any>) => {
+            // --- MODIFICATION 2: Update registerUser.fulfilled Reducer ---
+            // On successful registration, just update the status. DO NOT set user/token.
+            // This ensures the user remains logged out.
+            .addCase(registerUser.fulfilled, (state) => {
                 state.status = 'succeeded';
-                state.user = action.payload;
-                state.token = action.payload.token;
+                // Note: We are NOT changing state.user or state.token here.
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.status = 'failed';
