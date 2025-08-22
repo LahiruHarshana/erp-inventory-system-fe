@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { XIcon } from '../../components/icons';
 import type { Product, NewProduct } from '../../types';
 import type { Category } from '../../types';
+import type { Supplier } from '../../types';
 
 interface ProductModalProps {
     isOpen: boolean;
@@ -9,12 +10,13 @@ interface ProductModalProps {
     onSubmit: (productData: Product | NewProduct) => void;
     product: Product | null;
     categories: Category[];
+    suppliers: Supplier[];
 }
 
 type FormErrors = Partial<Record<keyof NewProduct, string>>;
 type TouchedFields = Partial<Record<keyof NewProduct, boolean>>;
 
-export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, product, categories }) => {
+export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, product, categories, suppliers }) => {
     const [formData, setFormData] = useState<NewProduct>({
         sku: '', name: '', description: '', categoryId: 0, supplierId: 0, unitPrice: 0,
     });
@@ -26,12 +28,12 @@ export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onS
             if (product) {
                 setFormData(product);
             } else {
-                setFormData({ sku: '', name: '', description: '', categoryId: categories[0]?.id || 0, supplierId: 0, unitPrice: 0 });
+                setFormData({ sku: '', name: '', description: '', categoryId: categories[0]?.id || 0, supplierId: suppliers[0]?.id || 0, unitPrice: 0 });
             }
             setErrors({});
             setTouched({});
         }
-    }, [isOpen, product, categories]);
+    }, [isOpen, product, categories, suppliers]);
 
     const validate = (data: NewProduct): FormErrors => {
         const newErrors: FormErrors = {};
@@ -39,6 +41,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onS
         if (!data.sku.trim()) newErrors.sku = 'SKU is required.';
         if (data.unitPrice <= 0) newErrors.unitPrice = 'Price must be greater than zero.';
         if (!data.categoryId || data.categoryId === 0) newErrors.categoryId = 'Please select a category.';
+        if (!data.supplierId || data.supplierId === 0) newErrors.supplierId = 'Please select a supplier.';
         return newErrors;
     };
 
@@ -60,7 +63,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onS
         e.preventDefault();
         const validationErrors = validate(formData);
         setErrors(validationErrors);
-        setTouched({ sku: true, name: true, categoryId: true, unitPrice: true });
+        setTouched({ sku: true, name: true, categoryId: true, supplierId: true, unitPrice: true });
         if (Object.keys(validationErrors).length === 0) {
             onSubmit(product ? { ...product, ...formData } : formData);
             onClose();
@@ -101,6 +104,14 @@ export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onS
                                 {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                             </select>
                             {errors.categoryId && touched.categoryId && <p className="text-xs text-red-600 mt-1">{errors.categoryId}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Supplier</label>
+                            <select name="supplierId" value={formData.supplierId} onChange={handleChange} onBlur={handleBlur} className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${errors.supplierId && touched.supplierId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'}`}>
+                                <option value={0} disabled>Select a supplier</option>
+                                {suppliers.map(sup => <option key={sup.id} value={sup.id}>{sup.name}</option>)}
+                            </select>
+                            {errors.supplierId && touched.supplierId && <p className="text-xs text-red-600 mt-1">{errors.supplierId}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Unit Price</label>
