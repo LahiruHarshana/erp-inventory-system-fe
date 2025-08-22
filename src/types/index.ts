@@ -51,3 +51,22 @@ export interface Product {
     unitPrice: number;
 }
 export type NewProduct = Omit<Product, 'id'>;
+
+export interface Supplier {
+    id: number;
+    name: string;
+    contactPerson: string;
+    email: string;
+    phone: string;
+    apiUrl: string;
+}
+
+export type NewSupplier = Omit<Supplier, 'id'>;
+
+export interface Warehouse {
+    id: number;
+    name: string;
+    location: string;
+}
+
+export type NewWarehouse = Omit<Warehouse, 'id'>;

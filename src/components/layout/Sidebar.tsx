@@ -31,8 +31,9 @@ export const Sidebar: React.FC = () => {
         { name: 'Reports', view: 'reports', icon: BarChartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_BUSINESS_OWNER'] },
         { name: 'Purchase Orders', view: 'purchaseOrders', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
         { name: 'Products', view: 'products', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
-        { name: 'Suppliers', view: 'suppliers', icon: TruckIcon, role: ['SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Suppliers', view: 'suppliers', icon: TruckIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] },
         { name: 'Users', view: 'users', icon: UsersIcon, role: ['ROLE_BUSINESS_OWNER'] },
+        { name:'Warehouses', view: 'warehouses', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER'] }
     ];
 
     return (

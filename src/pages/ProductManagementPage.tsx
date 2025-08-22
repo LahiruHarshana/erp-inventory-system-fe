@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../app/store';
 import { fetchProducts, addNewProduct, updateExistingProduct, deleteExistingProduct } from '../features/products/productSlice';
 import { fetchCategories, selectAllCategories } from '../features/category/categorySlice';
+import { fetchSuppliers, selectAllSuppliers } from '../features/suppliers/supplierSlice';
 import type { Product, NewProduct } from '../types';
 import { PlusIcon, EditIcon, TrashIcon, PackageIcon } from '../components/icons';
 import { ProductModal } from '../features/products/ProductModal';
@@ -30,6 +31,8 @@ export const ProductManagementPage: React.FC = () => {
     const { items: products, status, error } = useSelector((state: RootState) => state.products);
     const categories = useSelector(selectAllCategories);
     const categoriesStatus = useSelector((state: RootState) => state.categories.status);
+    const suppliers = useSelector(selectAllSuppliers);
+    const suppliersStatus = useSelector((state: RootState) => state.suppliers.status);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -37,7 +40,8 @@ export const ProductManagementPage: React.FC = () => {
     useEffect(() => {
         if (status === 'idle') dispatch(fetchProducts());
         if (categoriesStatus === 'idle') dispatch(fetchCategories());
-    }, [status, categoriesStatus, dispatch]);
+        if (suppliersStatus === 'idle') dispatch(fetchSuppliers());
+    }, [status, categoriesStatus, suppliersStatus, dispatch]);
 
     const handleOpenModal = (product: Product | null = null) => {
         setEditingProduct(product);
@@ -59,9 +63,10 @@ export const ProductManagementPage: React.FC = () => {
     };
 
     const getCategoryName = (id: number) => categories.find(c => c.id === id)?.name || 'N/A';
+    const getSupplierName = (id: number) => suppliers.find(s => s.id === id)?.name || 'N/A';
 
     const renderContent = () => {
-        if (status === 'loading' || categoriesStatus === 'loading') return <LoadingSpinner />;
+        if (status === 'loading' || categoriesStatus === 'loading' || suppliersStatus === 'loading') return <LoadingSpinner />;
         if (status === 'failed') return <div className="text-center p-8 text-red-600 bg-red-50 rounded-md"><strong>Error:</strong> {error}</div>;
         if (products.length === 0) return <EmptyState onAddNew={() => handleOpenModal()} />;
 
@@ -73,6 +78,7 @@ export const ProductManagementPage: React.FC = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Unit Price</th>
                         <th className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                     </tr>
@@ -83,6 +89,7 @@ export const ProductManagementPage: React.FC = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono text-xs">{product.sku}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{product.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getCategoryName(product.categoryId)}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getSupplierName(product.supplierId)}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right font-semibold">${product.unitPrice.toFixed(2)}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right space-x-4">
                                 <button onClick={() => handleOpenModal(product)} className="text-indigo-600 hover:text-indigo-900 p-1"><EditIcon className="h-5 w-5"/></button>
@@ -116,6 +123,7 @@ export const ProductManagementPage: React.FC = () => {
                 onSubmit={handleFormSubmit}
                 product={editingProduct}
                 categories={categories}
+                suppliers={suppliers}
             />
         </div>
     );
