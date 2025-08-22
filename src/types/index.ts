@@ -70,3 +70,41 @@ export interface Warehouse {
 }
 
 export type NewWarehouse = Omit<Warehouse, 'id'>;
+
+export enum OrderStatus {
+    PENDING = 'PENDING',
+    CONFIRMED = 'CONFIRMED',
+    SHIPPED = 'SHIPPED',
+    DELIVERED = 'DELIVERED',
+    CANCELLED = 'CANCELLED',
+    RETURNED = 'RETURNED',
+    RECEIVED = 'RECEIVED'
+}
+
+export interface PurchaseOrderItem {
+    id?: number;
+    productId: number;
+    quantity: number;
+    unitPrice: number;
+    productName?: string;
+}
+
+export interface PurchaseOrder {
+    id: number;
+    supplierId: number;
+    supplierName?: string;
+    orderDate: string;
+    expectedDeliveryDate: string;
+    status: OrderStatus;
+    totalAmount: number;
+    orderItems: PurchaseOrderItem[];
+}
+
+export type NewPurchaseOrder = Omit<PurchaseOrder, 'id' | 'orderDate' | 'status' | 'totalAmount' | 'supplierName'> & {
+    orderItems: Omit<PurchaseOrderItem, 'id' | 'productName'>[];
+};
+
+export interface Payment {
+    transactionId: string;
+    paymentMethod: string;
+}
