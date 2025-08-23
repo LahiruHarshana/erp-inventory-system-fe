@@ -101,10 +101,10 @@ export const SupplyChainCoordinatorDashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
                             <Pie data={productsBySupplier} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8">
-                                {productsBySupplier.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
+    {productsBySupplier.map((_,index) => (
+        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+    ))}
+</Pie>
                             <Tooltip />
                             <PieLegend />
                         </PieChart>

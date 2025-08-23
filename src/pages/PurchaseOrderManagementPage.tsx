@@ -7,7 +7,7 @@ import { fetchSuppliers, selectAllSuppliers } from '../features/suppliers/suppli
 import { fetchWarehouses, selectAllWarehouses } from '../features/warehouses/warehouseSlice';
 import type { NewPurchaseOrder, PurchaseOrder, Payment } from '../types';
 import { OrderStatus } from '../types';
-import { PlusIcon, ShoppingCartIcon } from '../components/icons';
+import { PlusIcon } from '../components/icons';
 import { PurchaseOrderModal } from '../features/purchaseOrders/PurchaseOrderModal';
 import { ReceiveOrderModal } from '../features/purchaseOrders/ReceiveOrderModal';
 import { PaymentModal } from '../features/purchaseOrders/PaymentModal';

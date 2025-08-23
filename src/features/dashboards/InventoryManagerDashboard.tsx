@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, Legend as PieLegend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Cell, Legend as PieLegend } from 'recharts';
 import type { RootState, AppDispatch } from '../../app/store';
 import { OrderStatus } from '../../types';
 import { PackageIcon, ShoppingCartIcon, TagIcon } from '../../components/icons';
@@ -100,11 +100,9 @@ export const InventoryManagerDashboard: React.FC = () => {
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Products by Category</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
-                            <Pie data={productsByCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8">
-                                {productsByCategory.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
+{productsByCategory.map((_, index) => (
+    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+))}
                             <Tooltip />
                             <PieLegend />
                         </PieChart>

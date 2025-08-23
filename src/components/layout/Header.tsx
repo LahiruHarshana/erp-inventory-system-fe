@@ -1,7 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
-
+export interface User {
+    token: string;
+    role: Role;
+    email: string;
+    firstname: string;
+    lastname: string;
+}
 export type Role = 'ROLE_BUSINESS_OWNER' | 'ROLE_INVENTORY_MANAGER' | 'ROLE_SUPPLY_CHAIN_COORDINATOR' | 'ROLE_ADMIN';
 
 export const Header: React.FC = () => {

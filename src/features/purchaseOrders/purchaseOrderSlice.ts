@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { purchaseOrderApiService } from '../../services/purchaseOrderApiService';
 import type { PurchaseOrder, NewPurchaseOrder, Payment } from '../../types';
-import { OrderStatus } from '../../types';
 import type { RootState } from '../../app/store';
 
 interface PurchaseOrderState {

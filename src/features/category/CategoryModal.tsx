@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { XIcon } from '../../components/icons';
-import type { NewCategory } from '../../types/categoryTypes';
+import type { NewCategory } from '../../types';
 
 interface CategoryModalProps {
     isOpen: boolean;
