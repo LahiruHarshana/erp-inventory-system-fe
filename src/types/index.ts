@@ -20,7 +20,7 @@ export interface User {
     token: string;
     role: Role;
     email: string;
-    // Add other user properties you might get from the backend
+name:string;
 }
 
 export interface RegisterRequest {
@@ -38,7 +38,9 @@ export interface AuthenticationRequest {
 
 export interface AuthenticationResponse {
     token: string;
-    role:Role
+    role:Role;
+    firstname:string;
+    lastname:string;
 }
 
 export interface Product {
@@ -71,15 +73,17 @@ export interface Warehouse {
 
 export type NewWarehouse = Omit<Warehouse, 'id'>;
 
-export enum OrderStatus {
-    PENDING = 'PENDING',
-    CONFIRMED = 'CONFIRMED',
-    SHIPPED = 'SHIPPED',
-    DELIVERED = 'DELIVERED',
-    CANCELLED = 'CANCELLED',
-    RETURNED = 'RETURNED',
-    RECEIVED = 'RECEIVED'
-}
+export const OrderStatus = {
+    PENDING: 'PENDING',
+    CONFIRMED: 'CONFIRMED',
+    SHIPPED: 'SHIPPED',
+    DELIVERED: 'DELIVERED',
+    CANCELLED: 'CANCELLED',
+    RETURNED: 'RETURNED',
+    RECEIVED: 'RECEIVED'
+} as const;
+
+export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus];
 
 export interface PurchaseOrderItem {
     id?: number;
