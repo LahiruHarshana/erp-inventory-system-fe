@@ -6,7 +6,6 @@ import { storeApiService } from '../../services/storeApiService';
 import type { Store, NewStore } from '../../types';
 import type { RootState } from '../../app/store';
 
-// Define the shape of the store state
 interface StoreState {
     items: Store[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -18,8 +17,6 @@ const initialState: StoreState = {
     status: 'idle',
     error: null,
 };
-
-// --- Async Thunks ---
 
 export const fetchStores = createAsyncThunk('stores/fetchStores', async (_, { rejectWithValue }) => {
     try {
@@ -51,14 +48,11 @@ export const updateExistingStore = createAsyncThunk('stores/updateExistingStore'
 export const deleteExistingStore = createAsyncThunk('stores/deleteExistingStore', async (id: number, { rejectWithValue }) => {
     try {
         await storeApiService.deleteStore(id);
-        return id; // Return the id on success to remove it from the state
+        return id;
     } catch (error: any) {
         return rejectWithValue(error.response?.data?.message || 'Failed to delete store');
     }
 });
-
-
-// --- The Slice ---
 
 export const storeSlice = createSlice({
     name: 'stores',
@@ -66,7 +60,6 @@ export const storeSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            // Fetch Stores
             .addCase(fetchStores.pending, (state) => {
                 state.status = 'loading';
             })
@@ -78,18 +71,15 @@ export const storeSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string;
             })
-            // Add New Store
             .addCase(addNewStore.fulfilled, (state, action: PayloadAction<Store>) => {
                 state.items.push(action.payload);
             })
-            // Update Existing Store
             .addCase(updateExistingStore.fulfilled, (state, action: PayloadAction<Store>) => {
                 const index = state.items.findIndex(item => item.id === action.payload.id);
                 if (index !== -1) {
                     state.items[index] = action.payload;
                 }
             })
-            // Delete Existing Store
             .addCase(deleteExistingStore.fulfilled, (state, action: PayloadAction<number>) => {
                 state.items = state.items.filter(item => item.id !== action.payload);
             });

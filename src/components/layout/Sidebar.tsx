@@ -1,58 +1,73 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
+import { setView, selectActiveView } from '../../features/ui/uiSlice';
 import type { AppDispatch, RootState } from '../../app/store';
-// Assuming icons are in a central place
-// import { HomeIcon, PackageIcon, BarChartIcon, ShoppingCartIcon, UsersIcon, BuildingIcon, TruckIcon, LogOutIcon } from '../icons';
-
-// Mock Icons for standalone example
-const HomeIcon = () => <span>🏠</span>;
-const PackageIcon = () => <span>📦</span>;
-const BarChartIcon = () => <span>📊</span>;
-const ShoppingCartIcon = () => <span>🛒</span>;
-const UsersIcon = () => <span>👥</span>;
-const BuildingIcon = () => <span>🏢</span>;
-const TruckIcon = () => <span>🚚</span>;
-const LogOutIcon = () => <span>🚪</span>;
-
+import {
+    BarChartIcon,
+    BuildingIcon,
+    EditIcon,
+    HomeIcon, LogOutIcon,
+    PackageIcon,
+    ShoppingCartIcon,
+    TruckIcon,
+    UsersIcon
+} from "../icons";
 
 export const Sidebar: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const currentRole = useSelector((state: RootState) => state.auth.user?.role);
+    const activeView = useSelector(selectActiveView);
 
     const handleLogout = () => {
         dispatch(logout());
     };
 
     const navigation = [
-        { name: 'Dashboard', icon: HomeIcon, role: ['INVENTORY_MANAGER', 'BUSINESS_OWNER', 'SUPPLY_CHAIN_COORDINATOR'] },
-        { name: 'Stores', icon: BuildingIcon, role: ['BUSINESS_OWNER'] },
-        { name: 'Inventory', icon: PackageIcon, role: ['INVENTORY_MANAGER'] },
-        { name: 'Reports', icon: BarChartIcon, role: ['INVENTORY_MANAGER', 'BUSINESS_OWNER'] },
-        { name: 'Purchase Orders', icon: ShoppingCartIcon, role: ['INVENTORY_MANAGER', 'SUPPLY_CHAIN_COORDINATOR'] },
-        { name: 'Suppliers', icon: TruckIcon, role: ['SUPPLY_CHAIN_COORDINATOR'] },
-        { name: 'Users', icon: UsersIcon, role: ['BUSINESS_OWNER'] },
+        { name: 'Dashboard', view: 'dashboard', icon: HomeIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_BUSINESS_OWNER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Stores', view: 'stores', icon: BuildingIcon, role: ['ROLE_BUSINESS_OWNER'] },
+        { name: 'Categories', view: 'categories', icon: EditIcon, role: ['ROLE_INVENTORY_MANAGER'] },
+        { name: 'Inventory', view: 'inventory', icon: PackageIcon, role: ['ROLE_INVENTORY_MANAGER'] },
+        { name: 'Reports', view: 'reports', icon: BarChartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_BUSINESS_OWNER'] },
+        { name: 'Purchase Orders', view: 'purchaseOrders', icon:ShoppingCartIcon, this: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Products', view: 'products', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Suppliers', view: 'suppliers', icon: TruckIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Users', view: 'users', icon: UsersIcon, role: ['ROLE_BUSINESS_OWNER'] },
+        { name: 'Warehouses', view: 'warehouses', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER'] }
     ];
 
     return (
-        <div className="flex flex-col w-64 bg-gray-800 text-gray-100">
-            <div className="flex items-center justify-center h-20 border-b border-gray-700">
-                <PackageIcon />
-                <span className="ml-3 text-2xl font-bold">ERP System</span>
+        <div className="flex flex-col w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white shadow-xl h-screen sticky top-0">
+            <div className="flex items-center justify-center h-16 border-b border-gray-700/50">
+                <PackageIcon className="w-6 h-6 text-blue-400" />
+                <span className="ml-2 text-xl font-semibold tracking-tight">ERP System</span>
             </div>
-            <div className="flex-1 overflow-y-auto">
-                <nav className="flex-1 px-2 py-4 space-y-1">
-                    {navigation.filter(item => currentRole && item.role.includes(currentRole)).map(item => (
-                        <a key={item.name} href="#" className="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-700 bg-gray-900">
-                            <item.icon />
-                            <span className="ml-3">{item.name}</span>
-                        </a>
-                    ))}
+            <div className="flex-1 overflow-y-auto px-3 py-4">
+                <nav className="space-y-1">
+                    {navigation
+                        .filter(item => currentRole && item.role.includes(currentRole))
+                        .map(item => (
+                            <button
+                                key={item.name}
+                                onClick={() => dispatch(setView(item.view as any))}
+                                className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out ${
+                                    activeView === item.view
+                                        ? 'bg-blue-600 text-white shadow-md'
+                                        : 'text-gray-300 hover:bg-gray-700 hover:text-white hover:shadow-sm'
+                                }`}
+                            >
+                                <item.icon className="w-5 h-5" />
+                                <span className="ml-3">{item.name}</span>
+                            </button>
+                        ))}
                 </nav>
             </div>
-            <div className="p-4 border-t border-gray-700">
-                <button onClick={handleLogout} className="w-full flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-700">
-                    <LogOutIcon />
+            <div className="p-3 border-t border-gray-700/50">
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-red-600/50 hover:text-white transition-all duration-200"
+                >
+                    <LogOutIcon className="w-5 h-5" />
                     <span className="ml-3">Logout</span>
                 </button>
             </div>

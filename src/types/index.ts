@@ -1,3 +1,8 @@
+export interface Category {
+    id: number;
+    name: string;
+}
+export type NewCategory = Omit<Category, 'id'>;
 export interface Store {
     id: number;
     storeName: string;
@@ -33,5 +38,73 @@ export interface AuthenticationRequest {
 
 export interface AuthenticationResponse {
     token: string;
-    // Include other fields your backend sends on login/register
+    role:Role
+}
+
+export interface Product {
+    id: number;
+    sku: string;
+    name: string;
+    description: string;
+    categoryId: number;
+    supplierId: number;
+    unitPrice: number;
+}
+export type NewProduct = Omit<Product, 'id'>;
+
+export interface Supplier {
+    id: number;
+    name: string;
+    contactPerson: string;
+    email: string;
+    phone: string;
+    apiUrl: string;
+}
+
+export type NewSupplier = Omit<Supplier, 'id'>;
+
+export interface Warehouse {
+    id: number;
+    name: string;
+    location: string;
+}
+
+export type NewWarehouse = Omit<Warehouse, 'id'>;
+
+export enum OrderStatus {
+    PENDING = 'PENDING',
+    CONFIRMED = 'CONFIRMED',
+    SHIPPED = 'SHIPPED',
+    DELIVERED = 'DELIVERED',
+    CANCELLED = 'CANCELLED',
+    RETURNED = 'RETURNED',
+    RECEIVED = 'RECEIVED'
+}
+
+export interface PurchaseOrderItem {
+    id?: number;
+    productId: number;
+    quantity: number;
+    unitPrice: number;
+    productName?: string;
+}
+
+export interface PurchaseOrder {
+    id: number;
+    supplierId: number;
+    supplierName?: string;
+    orderDate: string;
+    expectedDeliveryDate: string;
+    status: OrderStatus;
+    totalAmount: number;
+    orderItems: PurchaseOrderItem[];
+}
+
+export type NewPurchaseOrder = Omit<PurchaseOrder, 'id' | 'orderDate' | 'status' | 'totalAmount' | 'supplierName'> & {
+    orderItems: Omit<PurchaseOrderItem, 'id' | 'productName'>[];
+};
+
+export interface Payment {
+    transactionId: string;
+    paymentMethod: string;
 }
