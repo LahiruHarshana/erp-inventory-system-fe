@@ -68,7 +68,7 @@ export const WarehouseModal: React.FC<WarehouseModalProps> = ({ isOpen, onClose,
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 transition-opacity duration-300 animate-fadeIn">
+        <div className="fixed inset-0 backdrop-blur-md z-50 flex justify-center items-center p-4 transition-opacity duration-300 animate-fadeIn">
             <div className="bg-white rounded-lg shadow-xl p-6 m-4 max-w-lg w-full transform transition-transform duration-300 animate-scaleIn">
                 <div className="flex justify-between items-center mb-4 border-b pb-3">
                     <h3 className="text-xl font-semibold text-gray-800">{warehouse ? 'Edit Warehouse' : 'Add New Warehouse'}</h3>
