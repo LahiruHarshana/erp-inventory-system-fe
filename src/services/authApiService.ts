@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AuthenticationRequest, AuthenticationResponse, RegisterRequest } from '../types';
 
-const API_URL = 'erp-inventory-system-be.railway.internal/api/v1/auth';
+const API_URL = 'https://erp-inventory-system-be.up.railway.app/api/v1/auth';
 
 const authApiService = {
     register: (data: RegisterRequest): Promise<{ data: AuthenticationResponse }> => {
