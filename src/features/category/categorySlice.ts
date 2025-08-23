@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { categoryApiService } from '../../services/categoryApiService';
-import type { Category, NewCategory } from '../../types/categoryTypes';
+import type { Category, NewCategory } from '../../types';
 import type { RootState } from '../../app/store';
 
 interface CategoryState {

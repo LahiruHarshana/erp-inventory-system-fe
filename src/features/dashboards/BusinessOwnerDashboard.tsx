@@ -71,7 +71,7 @@ export const BusinessOwnerDashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
                             <Pie data={storeStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8">
-                                {storeStatusData.map((entry, index) => (
+                                {storeStatusData.map((_,index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
