@@ -8,6 +8,7 @@ import uiReducer from '../features/ui/uiSlice';
 import productReducer from '../features/products/productSlice';
 import supplierReducer from '../features/suppliers/supplierSlice';
 import warehouseReducer from '../features/warehouses/warehouseSlice.ts';
+import purchaseOrderReducer from '../features/purchaseOrders/purchaseOrderSlice';
 
 
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
         products: productReducer,
         suppliers: supplierReducer,
         warehouses:warehouseReducer,
+        purchaseOrders: purchaseOrderReducer,
     },
 });
 

@@ -16,6 +16,7 @@ import { Header } from './components/layout/Header';
 import {ProductManagementPage} from "./pages/ProductManagementPage.tsx";
 import {SupplierManagementPage} from "./pages/SupplierManagementPage.tsx";
 import {WarehouseManagementPage} from "./pages/WarehouseManagementPage.tsx";
+import {PurchaseOrderManagementPage} from "./pages/PurchaseOrderManagementPage.tsx";
 
 const MainContent: React.FC = () => {
     const activeView = useSelector(selectActiveView);
@@ -44,7 +45,9 @@ const MainContent: React.FC = () => {
                 return <SupplierManagementPage/>
             case 'warehouses':
                 return <WarehouseManagementPage/>
-            //     return <InventoryPage />;
+
+            case 'purchaseOrders':
+                return <PurchaseOrderManagementPage/>
             default:
                 return renderDashboard();
         }
