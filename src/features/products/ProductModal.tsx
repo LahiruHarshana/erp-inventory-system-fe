@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { XIcon } from '../../components/icons';
+import {PackageIcon, XIcon} from '../../components/icons';
 import type { Product, NewProduct } from '../../types';
 import type { Category } from '../../types';
 import type { Supplier } from '../../types';
@@ -70,6 +70,17 @@ export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onS
         }
     };
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFormData(prev => ({ ...prev, image: reader.result as string }));
+        };
+        reader.readAsDataURL(file);
+    };
+
     const isFormInvalid = Object.keys(validate(formData)).length > 0;
 
     if (!isOpen) return null;
@@ -83,6 +94,20 @@ export const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onS
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="md:col-span-1 flex flex-col items-center">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
+                            <div className="w-40 h-40 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 mb-2 overflow-hidden">
+                                {formData.image ? (
+                                    <img src={formData.image} alt="Product Preview" className="w-full h-full object-cover" />
+                                ) : (
+                                    <PackageIcon className="w-16 h-16 text-gray-400" />
+                                )}
+                            </div>
+                            <input type="file" id="imageUpload" accept="image/png, image/jpeg, image/webp" onChange={handleImageChange} className="hidden" />
+                            <label htmlFor="imageUpload" className="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Change
+                            </label>
+                        </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Product Name</label>
                             <input type="text" name="name" value={formData.name} onChange={handleChange} onBlur={handleBlur} className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${errors.name && touched.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'}`}/>

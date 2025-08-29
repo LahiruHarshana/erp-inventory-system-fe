@@ -16,6 +16,7 @@ const initialState: CategoryState = {
     error: null,
 };
 
+// No changes to your thunks
 export const fetchCategories = createAsyncThunk('categories/fetchCategories', async (_, { rejectWithValue }) => {
     try {
         const response = await categoryApiService.getCategories();
@@ -49,8 +50,10 @@ const categorySlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            // Fetch Categories
             .addCase(fetchCategories.pending, (state) => {
                 state.status = 'loading';
+                state.error = null; // Clear previous errors
             })
             .addCase(fetchCategories.fulfilled, (state, action: PayloadAction<Category[]>) => {
                 state.status = 'succeeded';
@@ -60,11 +63,28 @@ const categorySlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string;
             })
+            // Add New Category
+            .addCase(addNewCategory.pending, (state) => {
+                // Optionally handle a loading state for this specific action
+                state.error = null;
+            })
             .addCase(addNewCategory.fulfilled, (state, action: PayloadAction<Category>) => {
                 state.items.push(action.payload);
             })
+            .addCase(addNewCategory.rejected, (state, action) => {
+                // The error toast will be shown in the component,
+                // but you can still set a global error if needed.
+                state.error = action.payload as string;
+            })
+            // Delete Existing Category
+            .addCase(deleteExistingCategory.pending, (state) => {
+                state.error = null;
+            })
             .addCase(deleteExistingCategory.fulfilled, (state, action: PayloadAction<number>) => {
                 state.items = state.items.filter(item => item.id !== action.payload);
+            })
+            .addCase(deleteExistingCategory.rejected, (state, action) => {
+                state.error = action.payload as string;
             });
     },
 });

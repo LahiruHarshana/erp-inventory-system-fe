@@ -1,7 +1,5 @@
-// src/features/stores/storeSlice.ts
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit'; // <-- FIX: Import types separately
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { storeApiService } from '../../services/storeApiService';
 import type { Store, NewStore } from '../../types';
 import type { RootState } from '../../app/store';
@@ -18,6 +16,7 @@ const initialState: StoreState = {
     error: null,
 };
 
+// --- No changes to async thunks ---
 export const fetchStores = createAsyncThunk('stores/fetchStores', async (_, { rejectWithValue }) => {
     try {
         const response = await storeApiService.getStores();
@@ -60,8 +59,10 @@ export const storeSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            // --- Fetch Stores ---
             .addCase(fetchStores.pending, (state) => {
                 state.status = 'loading';
+                state.error = null;
             })
             .addCase(fetchStores.fulfilled, (state, action: PayloadAction<Store[]>) => {
                 state.status = 'succeeded';
@@ -71,6 +72,7 @@ export const storeSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string;
             })
+            // --- Add, Update, Delete ---
             .addCase(addNewStore.fulfilled, (state, action: PayloadAction<Store>) => {
                 state.items.push(action.payload);
             })
@@ -82,12 +84,24 @@ export const storeSlice = createSlice({
             })
             .addCase(deleteExistingStore.fulfilled, (state, action: PayloadAction<number>) => {
                 state.items = state.items.filter(item => item.id !== action.payload);
-            });
+            })
+            // --- Generic Pending/Rejected Handlers for Toasts ---
+            .addMatcher(
+                (action) => action.type.endsWith('/pending'),
+                (state) => {
+                    state.status = 'loading';
+                }
+            )
+            .addMatcher(
+                (action) => action.type.endsWith('/rejected'),
+                (state, action) => {
+                    state.status = 'failed';
+                    state.error = action.payload as string;
+                }
+            );
     },
 });
 
 export const selectAllStores = (state: RootState) => state.stores.items;
-export const getStoresStatus = (state: RootState) => state.stores.status;
-export const getStoresError = (state: RootState) => state.stores.error;
 
 export default storeSlice.reducer;

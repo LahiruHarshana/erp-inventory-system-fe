@@ -17,6 +17,10 @@ import {ProductManagementPage} from "./pages/ProductManagementPage.tsx";
 import {SupplierManagementPage} from "./pages/SupplierManagementPage.tsx";
 import {WarehouseManagementPage} from "./pages/WarehouseManagementPage.tsx";
 import {PurchaseOrderManagementPage} from "./pages/PurchaseOrderManagementPage.tsx";
+import {InventoryManagementPage} from "./pages/InventoryManagementPage.tsx";
+import {ReportManagementPage} from "./pages/ReportManagementPage.tsx";
+import {ForecastingPage} from "./pages/ForecastingPage.tsx";
+import {SalesOrderManagementPage} from "./pages/SalesOrderManagementPage.tsx";
 
 const MainContent: React.FC = () => {
     const activeView = useSelector(selectActiveView);
@@ -32,6 +36,7 @@ const MainContent: React.FC = () => {
     };
 
     const renderView = () => {
+        // @ts-ignore
         switch (activeView) {
             case 'dashboard':
                 return renderDashboard();
@@ -45,9 +50,16 @@ const MainContent: React.FC = () => {
                 return <SupplierManagementPage/>
             case 'warehouses':
                 return <WarehouseManagementPage/>
-
             case 'purchaseOrders':
                 return <PurchaseOrderManagementPage/>
+            case 'inventory':
+                return <InventoryManagementPage/>
+            case 'reports':
+                return <ReportManagementPage/>
+            case 'forcecasting':
+                return <ForecastingPage/>
+            case 'sales':
+                return <SalesOrderManagementPage/>
             default:
                 return renderDashboard();
         }

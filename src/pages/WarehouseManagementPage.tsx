@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast';
 import type { RootState, AppDispatch } from '../app/store';
 import { fetchWarehouses, addNewWarehouse, updateExistingWarehouse, deleteExistingWarehouse } from '../features/warehouses/warehouseSlice';
 import type { Warehouse, NewWarehouse } from '../types';
-import { PlusIcon, EditIcon, TrashIcon, HomeIcon } from '../components/icons';
+import { PlusIcon, EditIcon, TrashIcon, HomeIcon, ExclamationIcon, SearchIcon } from '../components/icons';
 import { WarehouseModal } from '../features/warehouses/WarehouseModal';
 
+// --- Helper Components ---
 const LoadingSpinner: React.FC = () => (
     <div className="flex justify-center items-center p-10"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div></div>
 );
 
 const EmptyState: React.FC<{ onAddNew: () => void }> = ({ onAddNew }) => (
-    <div className="text-center p-8 bg-gray-50 rounded-lg">
+    <div className="text-center p-8 bg-white rounded-lg">
         <HomeIcon className="mx-auto h-12 w-12 text-gray-400" />
         <h3 className="mt-2 text-sm font-medium text-gray-900">No warehouses found</h3>
         <p className="mt-1 text-sm text-gray-500">Get started by creating a new warehouse.</p>
@@ -24,39 +26,94 @@ const EmptyState: React.FC<{ onAddNew: () => void }> = ({ onAddNew }) => (
     </div>
 );
 
+// --- Main Component ---
 export const WarehouseManagementPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { items: warehouses, status, error } = useSelector((state: RootState) => state.warehouses);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingWarehouse, setEditingWarehouse] = useState<Warehouse | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        if (status === 'idle') dispatch(fetchWarehouses());
+        if (status === 'idle') {
+            dispatch(fetchWarehouses());
+        }
     }, [status, dispatch]);
+
+    useEffect(() => {
+        if (status === 'failed' && error) {
+            toast.error(`Error fetching data: ${error}`);
+        }
+    }, [status, error]);
+
+    const filteredWarehouses = useMemo(() => {
+        if (!searchQuery) return warehouses;
+        return warehouses.filter(warehouse =>
+            warehouse.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            warehouse.location.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [warehouses, searchQuery]);
 
     const handleOpenModal = (warehouse: Warehouse | null = null) => {
         setEditingWarehouse(warehouse);
         setIsModalOpen(true);
     };
 
-    const handleFormSubmit = (warehouseData: Warehouse | NewWarehouse) => {
-        if ('id' in warehouseData) {
-            dispatch(updateExistingWarehouse(warehouseData as Warehouse));
-        } else {
-            dispatch(addNewWarehouse(warehouseData as NewWarehouse));
-        }
+    const handleFormSubmit = async (warehouseData: Warehouse | NewWarehouse) => {
+        const isUpdating = 'id' in warehouseData;
+        const action = isUpdating
+            ? updateExistingWarehouse(warehouseData as Warehouse)
+            : addNewWarehouse(warehouseData as NewWarehouse);
+
+        const promise = dispatch(action).unwrap();
+
+        toast.promise(promise, {
+            loading: isUpdating ? 'Updating warehouse...' : 'Creating warehouse...',
+            success: (result) => `Warehouse "${result.name}" ${isUpdating ? 'updated' : 'created'} successfully!`,
+            error: (err) => err || `Failed to ${isUpdating ? 'update' : 'create'} warehouse.`,
+        });
     };
 
-    const handleDelete = (id: number) => {
-        if (window.confirm('Are you sure you want to delete this warehouse?')) {
-            dispatch(deleteExistingWarehouse(id));
-        }
+    const handleDelete = (id: number, name: string) => {
+        toast((t) => (
+            <div className="flex flex-col items-center gap-3 p-2">
+                <div className="flex items-center">
+                    <ExclamationIcon className="h-8 w-8 text-red-500 mr-3" />
+                    <div className="text-left">
+                        <p className="font-bold text-gray-800">Delete "{name}"</p>
+                        <p className="text-sm text-gray-600">Are you sure you want to delete this warehouse?</p>
+                    </div>
+                </div>
+                <div className="w-full flex justify-end gap-2">
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        className="px-4 py-1.5 rounded-md text-sm font-medium bg-gray-100 hover:bg-gray-200 border border-gray-300"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={async () => {
+                            toast.dismiss(t.id);
+                            try {
+                                await dispatch(deleteExistingWarehouse(id)).unwrap();
+                                toast.success('Warehouse deleted successfully!');
+                            } catch (err: any) {
+                                toast.error(err || 'Failed to delete warehouse.');
+                            }
+                        }}
+                        className="px-4 py-1.5 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        ), { duration: 6000 });
     };
 
     const renderContent = () => {
-        if (status === 'loading') return <LoadingSpinner />;
-        if (status === 'failed') return <div className="text-center p-8 text-red-600 bg-red-50 rounded-md"><strong>Error:</strong> {error}</div>;
-        if (warehouses.length === 0) return <EmptyState onAddNew={() => handleOpenModal()} />;
+        if (status === 'loading' && warehouses.length === 0) return <LoadingSpinner />;
+        if (status === 'failed' && warehouses.length === 0) return <div className="text-center p-8 text-red-600 bg-red-50 rounded-md"><strong>Error:</strong> {error}</div>;
+        if (status !== 'loading' && warehouses.length === 0) return <EmptyState onAddNew={() => handleOpenModal()} />;
 
         return (
             <div className="overflow-x-auto">
@@ -69,42 +126,66 @@ export const WarehouseManagementPage: React.FC = () => {
                     </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                    {warehouses.map((warehouse) => (
+                    {filteredWarehouses.map((warehouse) => (
                         <tr key={warehouse.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{warehouse.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{warehouse.location}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right space-x-4">
-                                <button onClick={() => handleOpenModal(warehouse)} className="text-indigo-600 hover:text-indigo-900 p-1"><EditIcon className="h-5 w-5"/></button>
-                                <button onClick={() => handleDelete(warehouse.id)} className="text-red-600 hover:text-red-900 p-1"><TrashIcon className="h-5 w-5"/></button>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right space-x-2">
+                                <button onClick={() => handleOpenModal(warehouse)} className="text-indigo-600 hover:text-indigo-900 p-1 rounded-full hover:bg-indigo-50"><EditIcon className="h-5 w-5"/></button>
+                                <button onClick={() => handleDelete(warehouse.id, warehouse.name)} className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-50"><TrashIcon className="h-5 w-5"/></button>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
+                {filteredWarehouses.length === 0 && searchQuery && (
+                    <div className="text-center p-8 text-gray-500">No warehouses found for "{searchQuery}".</div>
+                )}
             </div>
         );
     };
 
     return (
         <div className="p-4 md:p-8 bg-gray-50 min-h-full">
-            <header className="flex justify-between items-center mb-6">
+            <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+
+            <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Warehouse Management</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Warehouse Management</h1>
                     <p className="mt-1 text-sm text-gray-500">Manage all company warehouses.</p>
                 </div>
-                <button onClick={() => handleOpenModal()} className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 shadow-sm font-medium flex items-center">
+                <button onClick={() => handleOpenModal()} className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 shadow-sm font-medium flex items-center w-full md:w-auto justify-center">
                     <PlusIcon className="h-5 w-5 mr-2"/> Add New Warehouse
                 </button>
             </header>
+
+            <div className="mb-4">
+                <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <SearchIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Search by warehouse name or location..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                </div>
+            </div>
+
             <main className="bg-white shadow-sm rounded-lg">
                 {renderContent()}
             </main>
-            <WarehouseModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSubmit={handleFormSubmit}
-                warehouse={editingWarehouse}
-            />
+
+            {isModalOpen && (
+                <WarehouseModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleFormSubmit}
+                    warehouse={editingWarehouse}
+                />
+            )}
         </div>
     );
 };

@@ -16,6 +16,7 @@ const initialState: SupplierState = {
     error: null,
 };
 
+// --- No changes to async thunks ---
 export const fetchSuppliers = createAsyncThunk('suppliers/fetchSuppliers', async (_, { rejectWithValue }) => {
     try {
         const response = await supplierApiService.getSuppliers();
@@ -58,7 +59,11 @@ const supplierSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchSuppliers.pending, (state) => { state.status = 'loading'; })
+            // --- Fetch Suppliers ---
+            .addCase(fetchSuppliers.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
             .addCase(fetchSuppliers.fulfilled, (state, action: PayloadAction<Supplier[]>) => {
                 state.status = 'succeeded';
                 state.items = action.payload;
@@ -67,15 +72,36 @@ const supplierSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string;
             })
+            // --- Add New Supplier ---
+            .addCase(addNewSupplier.pending, (state) => {
+                state.error = null;
+            })
             .addCase(addNewSupplier.fulfilled, (state, action: PayloadAction<Supplier>) => {
                 state.items.push(action.payload);
+            })
+            .addCase(addNewSupplier.rejected, (state, action) => {
+                state.error = action.payload as string;
+            })
+            // --- Update Existing Supplier ---
+            .addCase(updateExistingSupplier.pending, (state) => {
+                state.error = null;
             })
             .addCase(updateExistingSupplier.fulfilled, (state, action: PayloadAction<Supplier>) => {
                 const index = state.items.findIndex(item => item.id === action.payload.id);
                 if (index !== -1) { state.items[index] = action.payload; }
             })
+            .addCase(updateExistingSupplier.rejected, (state, action) => {
+                state.error = action.payload as string;
+            })
+            // --- Delete Existing Supplier ---
+            .addCase(deleteExistingSupplier.pending, (state) => {
+                state.error = null;
+            })
             .addCase(deleteExistingSupplier.fulfilled, (state, action: PayloadAction<number>) => {
                 state.items = state.items.filter(item => item.id !== action.payload);
+            })
+            .addCase(deleteExistingSupplier.rejected, (state, action) => {
+                state.error = action.payload as string;
             });
     },
 });

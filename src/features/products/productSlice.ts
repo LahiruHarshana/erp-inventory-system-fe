@@ -16,6 +16,7 @@ const initialState: ProductState = {
     error: null,
 };
 
+// --- No changes to the async thunks ---
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async (_, { rejectWithValue }) => {
     try {
         const response = await productApiService.getProducts();
@@ -52,13 +53,18 @@ export const deleteExistingProduct = createAsyncThunk('products/deleteExistingPr
     }
 });
 
+
 const productSlice = createSlice({
     name: 'products',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchProducts.pending, (state) => { state.status = 'loading'; })
+            // --- Fetch Products ---
+            .addCase(fetchProducts.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
             .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
                 state.status = 'succeeded';
                 state.items = action.payload;
@@ -67,15 +73,38 @@ const productSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string;
             })
+            // --- Add New Product ---
+            .addCase(addNewProduct.pending, (state) => {
+                state.error = null;
+            })
             .addCase(addNewProduct.fulfilled, (state, action: PayloadAction<Product>) => {
                 state.items.push(action.payload);
             })
+            .addCase(addNewProduct.rejected, (state, action) => {
+                state.error = action.payload as string;
+            })
+            // --- Update Existing Product ---
+            .addCase(updateExistingProduct.pending, (state) => {
+                state.error = null;
+            })
             .addCase(updateExistingProduct.fulfilled, (state, action: PayloadAction<Product>) => {
                 const index = state.items.findIndex(item => item.id === action.payload.id);
-                if (index !== -1) { state.items[index] = action.payload; }
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
+            })
+            .addCase(updateExistingProduct.rejected, (state, action) => {
+                state.error = action.payload as string;
+            })
+            // --- Delete Existing Product ---
+            .addCase(deleteExistingProduct.pending, (state) => {
+                state.error = null;
             })
             .addCase(deleteExistingProduct.fulfilled, (state, action: PayloadAction<number>) => {
                 state.items = state.items.filter(item => item.id !== action.payload);
+            })
+            .addCase(deleteExistingProduct.rejected, (state, action) => {
+                state.error = action.payload as string;
             });
     },
 });

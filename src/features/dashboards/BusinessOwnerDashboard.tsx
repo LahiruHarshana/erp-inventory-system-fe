@@ -36,7 +36,7 @@ export const BusinessOwnerDashboard: React.FC = () => {
 
     const storeStatusData = useMemo(() => {
         if (storesStatus !== 'succeeded') return [];
-        const verifiedCount = stores.filter(store => store.isVerified).length;
+        const verifiedCount = stores.filter(store => store.verified).length;
         const pendingCount = stores.length - verifiedCount;
         return [
             { name: 'Verified', value: verifiedCount },
@@ -97,8 +97,8 @@ export const BusinessOwnerDashboard: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{store.storeName}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{store.storeRegistrationNumber}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${store.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                                {store.isVerified ? 'Verified' : 'Pending'}
+                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${store.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                                {store.verified ? 'Verified' : 'Pending'}
                                             </span>
                                     </td>
                                 </tr>

@@ -58,7 +58,10 @@ const warehouseSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchWarehouses.pending, (state) => { state.status = 'loading'; })
+            .addCase(fetchWarehouses.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
             .addCase(fetchWarehouses.fulfilled, (state, action: PayloadAction<Warehouse[]>) => {
                 state.status = 'succeeded';
                 state.items = action.payload;
@@ -67,15 +70,35 @@ const warehouseSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string;
             })
+            .addCase(addNewWarehouse.pending, (state) => {
+                state.error = null;
+            })
             .addCase(addNewWarehouse.fulfilled, (state, action: PayloadAction<Warehouse>) => {
                 state.items.push(action.payload);
             })
+            .addCase(addNewWarehouse.rejected, (state, action) => {
+                state.error = action.payload as string;
+            })
+            .addCase(updateExistingWarehouse.pending, (state) => {
+                state.error = null;
+            })
             .addCase(updateExistingWarehouse.fulfilled, (state, action: PayloadAction<Warehouse>) => {
                 const index = state.items.findIndex(item => item.id === action.payload.id);
-                if (index !== -1) { state.items[index] = action.payload; }
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
+            })
+            .addCase(updateExistingWarehouse.rejected, (state, action) => {
+                state.error = action.payload as string;
+            })
+            .addCase(deleteExistingWarehouse.pending, (state) => {
+                state.error = null;
             })
             .addCase(deleteExistingWarehouse.fulfilled, (state, action: PayloadAction<number>) => {
                 state.items = state.items.filter(item => item.id !== action.payload);
+            })
+            .addCase(deleteExistingWarehouse.rejected, (state, action) => {
+                state.error = action.payload as string;
             });
     },
 });

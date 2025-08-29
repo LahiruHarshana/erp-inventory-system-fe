@@ -10,9 +10,7 @@ import {
     HomeIcon, LogOutIcon,
     PackageIcon,
     ShoppingCartIcon,
-    TruckIcon,
-    UsersIcon
-} from "../icons";
+    TruckIcon} from "../icons";
 
 export const Sidebar: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -32,8 +30,10 @@ export const Sidebar: React.FC = () => {
         { name: 'Purchase Orders', view: 'purchaseOrders', icon:ShoppingCartIcon, this: ShoppingCartIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] },
         { name: 'Products', view: 'products', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER']},
         { name: 'Suppliers', view: 'suppliers', icon: TruckIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] },
-        { name: 'Users', view: 'users', icon: UsersIcon, role: ['ROLE_BUSINESS_OWNER'] },
-        { name: 'Warehouses', view: 'warehouses', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER'] }
+        // { name: 'Users', view: 'users', icon: UsersIcon, role: ['ROLE_BUSINESS_OWNER'] },
+        { name: 'Warehouses', view: 'warehouses', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER'] },
+        { name: 'Forcecasting', view: 'forcecasting', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER','ROLE_BUSINESS_OWNER','ROLE_SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Sales', view: 'sales', icon: BuildingIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] }
     ];
 
     return (

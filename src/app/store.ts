@@ -9,6 +9,9 @@ import productReducer from '../features/products/productSlice';
 import supplierReducer from '../features/suppliers/supplierSlice';
 import warehouseReducer from '../features/warehouses/warehouseSlice.ts';
 import purchaseOrderReducer from '../features/purchaseOrders/purchaseOrderSlice';
+import reportReducer from '../features/reports/reportSlice';
+import salesOrderReducer from '../features/salesOrders/salesOrderSlice';
+import forecastingReducer from '../features/forecasting/forecastingSlice';
 
 
 export const store = configureStore({
@@ -23,6 +26,9 @@ export const store = configureStore({
         suppliers: supplierReducer,
         warehouses:warehouseReducer,
         purchaseOrders: purchaseOrderReducer,
+        reports: reportReducer,
+        salesOrders: salesOrderReducer,
+        forecasting: forecastingReducer,
     },
 });
 
