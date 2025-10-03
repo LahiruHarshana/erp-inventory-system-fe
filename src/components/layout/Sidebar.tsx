@@ -24,16 +24,16 @@ export const Sidebar: React.FC = () => {
     const navigation = [
         { name: 'Dashboard', view: 'dashboard', icon: HomeIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_BUSINESS_OWNER', 'ROLE_SUPPLY_CHAIN_COORDINATOR'] },
         { name: 'Stores', view: 'stores', icon: BuildingIcon, role: ['ROLE_BUSINESS_OWNER'] },
-        { name: 'Categories', view: 'categories', icon: EditIcon, role: ['ROLE_INVENTORY_MANAGER'] },
-        { name: 'Inventory', view: 'inventory', icon: PackageIcon, role: ['ROLE_INVENTORY_MANAGER'] },
+        { name: 'Categories', view: 'categories', icon: EditIcon, role: ['ROLE_INVENTORY_MANAGER','ROLE_BUSINESS_OWNER'] },
+        { name: 'Inventory', view: 'inventory', icon: PackageIcon, role: ['ROLE_INVENTORY_MANAGER','ROLE_BUSINESS_OWNER'] },
         { name: 'Reports', view: 'reports', icon: BarChartIcon, role: ['ROLE_INVENTORY_MANAGER', 'ROLE_BUSINESS_OWNER'] },
-        { name: 'Purchase Orders', view: 'purchaseOrders', icon:ShoppingCartIcon, this: ShoppingCartIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] },
-        { name: 'Products', view: 'products', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER']},
-        { name: 'Suppliers', view: 'suppliers', icon: TruckIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] },
+        { name: 'Purchase Orders', view: 'purchaseOrders', icon:ShoppingCartIcon, this: ShoppingCartIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR','ROLE_BUSINESS_OWNER'] },
+        { name: 'Products', view: 'products', icon: ShoppingCartIcon, role: ['ROLE_INVENTORY_MANAGER','ROLE_BUSINESS_OWNER']},
+        { name: 'Suppliers', view: 'suppliers', icon: TruckIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR','ROLE_BUSINESS_OWNER'] },
         // { name: 'Users', view: 'users', icon: UsersIcon, role: ['ROLE_BUSINESS_OWNER'] },
-        { name: 'Warehouses', view: 'warehouses', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER'] },
+        { name: 'Warehouses', view: 'warehouses', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER','ROLE_BUSINESS_OWNER'] },
         { name: 'Forcecasting', view: 'forcecasting', icon: BuildingIcon, role: ['ROLE_INVENTORY_MANAGER','ROLE_BUSINESS_OWNER','ROLE_SUPPLY_CHAIN_COORDINATOR'] },
-        { name: 'Sales', view: 'sales', icon: BuildingIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR'] }
+        { name: 'Sales', view: 'sales', icon: BuildingIcon, role: ['ROLE_SUPPLY_CHAIN_COORDINATOR','ROLE_BUSINESS_OWNER'] }
     ];
 
     return (
